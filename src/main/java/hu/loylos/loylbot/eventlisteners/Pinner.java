@@ -63,6 +63,7 @@ public class Pinner extends ReactionResponder<Pin> {
         var mono = Mono.zip(user, avatar, imageUrl, timestamp, message, content, count, pinChannel);
         var newMono = mono
                 .filter(tuple -> tuple.getT7() >= LIMIT)
+                .filter(tuple -> pinRepository.findByUrl(link).isEmpty())
                 .flatMap(tuple ->
                         tuple.getT8()
                                 .createEmbed(
@@ -79,8 +80,8 @@ public class Pinner extends ReactionResponder<Pin> {
                 .doOnNext(msg -> log.info(msg.getContent()))
                 .map(msg -> Pin.builder().id(msg.getId().asLong()).url(link).build())
                 .map(pinRepository::save);
-        return Mono.just(link)
-                .map(pinRepository::findByUrl)
+
+        return Mono.fromCallable(() -> pinRepository.findByUrl(link))
                 .map(pins -> Optional.ofNullable(pins.isEmpty() ? null : pins.get(0)))
                 .flatMap(Mono::justOrEmpty)
                 .map(Pin::getId)
