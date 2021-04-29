@@ -42,7 +42,7 @@ public class PecekResponder extends MessageResponder<Message> {
             return message.getChannel()
                     .flatMap(messageChannel -> messageChannel.createMessage(
                             messageCreateSpec -> messageCreateSpec
-                                    .setMessageReference(message.getId())
+                                    //.setMessageReference(message.getId())
                                     .setContent("jóreggelt drágám <3")
                     ));
     }

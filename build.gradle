@@ -21,7 +21,7 @@ repositories {
 
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-webflux'
-	implementation 'com.discord4j:discord4j-core:3.2.0-M3'
+	implementation 'com.discord4j:discord4j-core:3.1.5'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'mysql:mysql-connector-java'
 	implementation 'com.kennycason:kumo-core:1.27'
