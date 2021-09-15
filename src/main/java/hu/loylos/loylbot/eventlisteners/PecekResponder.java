@@ -10,8 +10,7 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.time.*;
-import java.time.temporal.ChronoUnit;
+import java.time.ZonedDateTime;
 
 @Component
 @Slf4j
@@ -49,9 +48,10 @@ public class PecekResponder extends MessageResponder<Message> {
 
     @Override
     public boolean messageFilter(Message message) {
-        var localDate = LocalDate.ofInstant(Instant.ofEpochSecond(Long.parseLong(timestamp)), ZoneId.systemDefault());
-        var nextDay4am = localDate.atStartOfDay().plus(28, ChronoUnit.HOURS);
-        return LocalDateTime.now().isAfter(nextDay4am) && message.getAuthor().get().getId().asLong() == 227440405967273984L;
+        return false;
+//        var localDate = LocalDate.ofInstant(Instant.ofEpochSecond(Long.parseLong(timestamp)), ZoneId.systemDefault());
+//        var nextDay4am = localDate.atStartOfDay().plus(28, ChronoUnit.HOURS);
+//        return LocalDateTime.now().isAfter(nextDay4am) && message.getAuthor().get().getId().asLong() == 227440405967273984L;
 
     }
 

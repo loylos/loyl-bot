@@ -1,15 +1,17 @@
 package hu.loylos.loylbot.api;
 
 import discord4j.common.util.Snowflake;
+import discord4j.core.object.entity.Message;
 import discord4j.core.object.entity.channel.MessageChannel;
+import discord4j.core.object.entity.channel.TextChannel;
 import hu.loylos.loylbot.config.LoylbotConfig;
 import hu.loylos.loylbot.gateway.Gateway;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Mono;
+
+import java.util.List;
 
 
 @RestController
@@ -43,6 +45,32 @@ public class LoylbotApi {
                 .flatMap(gatewayDiscordClient -> gatewayDiscordClient.getChannelById(Snowflake.of(channelId)))
                 .flatMap(channel -> ((MessageChannel) channel).createMessage(message))
                 .subscribe();
+    }
+
+    @DeleteMapping("/deleteMessage/{channelId}/{messageId}")
+    public void deleteMessage(@PathVariable("channelId") Long channelId, @PathVariable("messageId") Long messageId) {
+        gateway.getGateway()
+                .flatMap(gatewayDiscordClient -> gatewayDiscordClient.getMessageById(Snowflake.of(channelId),Snowflake.of(messageId)))
+                .flatMap(Message::delete)
+                .subscribe();
+    }
+
+    @GetMapping("/{id}/{from}/{until}")
+    public Mono<List<String>> getDayShit(@PathVariable("id") Long userId, @PathVariable("from") Long from, @PathVariable("until") Long until) {
+        return gateway.getGateway()
+                .flatMap(gatewayDiscordClient -> gatewayDiscordClient.getChannelById(Snowflake.of(341945834512056321L)))
+                .doOnNext(channel -> log.info(channel.toString()))
+                .map(channel -> (TextChannel)channel)
+                .flatMapMany(channel -> channel.getMessagesAfter(Snowflake.of(from)))
+                .takeWhile(message -> message.getId().asLong() < until)
+                .doOnNext(message -> log.info(message.getAuthor().get().getUsername()))
+               // .filter(message -> message.getAuthor().get().getId().asLong() == userId)
+                .map(Message::getEmbeds)
+                .filter(embeds -> embeds.size()>0)
+                .map(embeds -> embeds.get(0))
+                .map(embed -> embed.getUrl().orElse(""))
+                .collectList();
+
     }
 
 //    @PostMapping("/cloud/{id}")

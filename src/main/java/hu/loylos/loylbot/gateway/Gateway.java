@@ -19,6 +19,7 @@ public class Gateway {
 
     public Mono<GatewayDiscordClient> getGateway() {
         if (gateway == null) {
+
             gateway = DiscordClient.create(loylbotConfig.getClientSecret())
                     .login();
 

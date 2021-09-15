@@ -23,6 +23,7 @@ public abstract class MessageResponder<T> {
                                 .map(MessageCreateEvent::getMessage)
                                 .filter(this::messageFilter)
                                 .flatMap(this::messageHandler)
+                                .onErrorContinue((ex, err) -> log.error(ex.getMessage() + ": " + err.toString()))
                                 .subscribe()
                 )
                 .subscribe();
